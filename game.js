@@ -27,13 +27,13 @@ function drawRect(x, y, color) {
 
 function drawSnake() {
     // Draw the body first
-    ctx.fillStyle = 'green';
+    ctx.fillStyle = 'cornflowerblue';
     for (let i = snake.length - 1; i > 0; i--) {
-        drawRect(snake[i].x, snake[i].y, 'green');
+        drawRect(snake[i].x, snake[i].y, 'cornflowerblue');
     }
     // Draw the head last
-    ctx.fillStyle = 'darkgreen';
-    drawRect(snake[0].x, snake[0].y, 'darkgreen');
+    ctx.fillStyle = 'teal';
+    drawRect(snake[0].x, snake[0].y, 'teal');
 }
 
 function drawFood() {
@@ -176,4 +176,3 @@ function restartGame() {
 document.addEventListener('keydown', changeDirection);
 startButton.addEventListener('click', startGame);
 restartButton.addEventListener('click', restartGame);
-    
