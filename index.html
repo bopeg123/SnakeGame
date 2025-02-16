@@ -22,16 +22,23 @@
             margin-bottom: 20px;
             font-size: 24px;
         }
-        #timer {
-            margin-top: 10px;
-            font-size: 18px;
+        #controls {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 5px;
         }
     </style>
 </head>
 <body>
     <div id="score">Score: 0</div>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <div id="timer">Next wall change: 10s</div>
+    <div id="controls">
+        <button id="startButton">Start</button>
+        <button id="restartButton">Restart</button>
+    </div>
     <script src="game.js"></script>
 </body>
 </html>

@@ -1,7 +1,8 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const scoreDisplay = document.getElementById('score');
-const timerDisplay = document.getElementById('timer');
+const startButton = document.getElementById('startButton');
+const restartButton = document.getElementById('restartButton');
 
 const gridSize = 20;
 const canvasSize = 400;
@@ -17,8 +18,7 @@ let score = 0;
 let gameInterval;
 let blueFoodTimeout;
 let redWallTimeout;
-let wallTimer = 10;
-let wallTimerInterval;
+let isGameRunning = false;
 
 function drawRect(x, y, color) {
     ctx.fillStyle = color;
@@ -26,15 +26,14 @@ function drawRect(x, y, color) {
 }
 
 function drawSnake() {
+    // Draw the body first
     ctx.fillStyle = 'green';
-    snake.forEach((segment, index) => {
-        if (index === 0) {
-            ctx.fillStyle = 'yellow'; // Different color for the head
-        } else {
-            ctx.fillStyle = 'green';
-        }
-        drawRect(segment.x, segment.y, ctx.fillStyle);
-    });
+    for (let i = snake.length - 1; i > 0; i--) {
+        drawRect(snake[i].x, snake[i].y, 'green');
+    }
+    // Draw the head last
+    ctx.fillStyle = 'darkgreen';
+    drawRect(snake[0].x, snake[0].y, 'darkgreen');
 }
 
 function drawFood() {
@@ -83,7 +82,7 @@ function moveSnake() {
     }
 
     if (head.x < 0 || head.x >= 20 || head.y < 0 || head.y >= 20) {
-        // Prevent the snake from shrinking when bouncing off the wall
+        // Bounce the snake back into the canvas
         if (head.x < 0) head.x = 0;
         if (head.x >= 20) head.x = 19;
         if (head.y < 0) head.y = 0;
@@ -106,7 +105,7 @@ function gameOver() {
     clearInterval(gameInterval);
     clearTimeout(blueFoodTimeout);
     clearTimeout(redWallTimeout);
-    clearInterval(wallTimerInterval);
+    isGameRunning = false;
     ctx.fillStyle = 'black';
     ctx.font = '40px Arial';
     ctx.fillText('Game Over!', canvasSize / 2 - 100, canvasSize / 2);
@@ -128,17 +127,10 @@ function scheduleRedWall() {
     redWallTimeout = setTimeout(() => {
         const walls = ['top', 'bottom', 'left', 'right'];
         redWall = walls[Math.floor(Math.random() * walls.length)];
-        wallTimer = 10;
-        timerDisplay.textContent = `Next wall change: ${wallTimer}s`;
-        wallTimerInterval = setInterval(() => {
-            wallTimer--;
-            timerDisplay.textContent = `Next wall change: ${wallTimer}s`;
-            if (wallTimer <= 0) {
-                clearInterval(wallTimerInterval);
-                redWall = null;
-                scheduleRedWall();
-            }
-        }, 1000);
+        setTimeout(() => {
+            redWall = null;
+            scheduleRedWall();
+        }, 10000);
     }, delay);
 }
 
@@ -163,12 +155,25 @@ function changeDirection(event) {
     }
 }
 
-document.addEventListener('keydown', changeDirection);
-
 function startGame() {
-    gameInterval = setInterval(gameLoop, snakeSpeed);
-    scheduleBlueFood();
-    scheduleRedWall();
+    if (!isGameRunning) {
+        isGameRunning = true;
+        snake = [{ x: 10, y: 10 }];
+        direction = { x: 0, y: 0 };
+        score = 0;
+        scoreDisplay.textContent = `Score: ${score}`;
+        gameInterval = setInterval(gameLoop, snakeSpeed);
+        scheduleBlueFood();
+        scheduleRedWall();
+    }
 }
 
-startGame();
+function restartGame() {
+    gameOver();
+    startGame();
+}
+
+document.addEventListener('keydown', changeDirection);
+startButton.addEventListener('click', startGame);
+restartButton.addEventListener('click', restartGame);
+    
